@@ -6,6 +6,8 @@ import { db } from './firebase.config';
 const App = () => {
   const [todo, setTodo] = useState('')
   const [todolist, setTodolist] = useState([])
+  // const [modal, setModal] = useState(false)
+  const[promptValue, setPromptValue] = useState('')
 
   const handleTask = (e) => {
     setTodo(e.target.value)
@@ -32,6 +34,19 @@ const App = () => {
 
   }, [])
 
+ const handleEdit = (item) => {
+    const valueFromPrompt = window.prompt('Update your task', item.todo) // Passed item.todo as default
+    
+    if (valueFromPrompt !== null && valueFromPrompt.trim() !== "") {
+
+      setPromptValue(valueFromPrompt)
+
+   
+      set(ref(db, "todolist/" + item.id), {
+        todo: valueFromPrompt,
+      });
+    }
+  }
 
 
   const handleDelete = (item) => {
@@ -59,11 +74,17 @@ return (
         todolist.map((item) => {
           return (
            
-              <li className='list-disc'>{item.todo} <button onClick={() =>handleDelete(item)} className='bg-blue-500 text-[white] p-2 rounded-lg m-4'>Delete </button></li>
+              <li className='list-disc'>{item.todo} <button onClick={() =>handleDelete(item)} className='bg-blue-500 text-[white] p-2 rounded-lg m-4'>Delete </button><button onClick={() =>handleEdit(item)} className='bg-blue-900 text-[white] p-2 rounded-lg m-4'>Edit</button></li>
           
           )
         })
       }
+      {/* {modal &&
+      <>
+        <div className='flex flex-col justify-center items-center'>{promptValue}</div>
+        <input type="text" placeholder='edit' onChange={(e) => setPromptValue(e.target.value)} />
+       </>
+    } */}
      </ul>
      </div>
   </>
